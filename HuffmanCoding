@@ -1,0 +1,120 @@
+public class HuffmanCoding {
+
+	static class Node{
+		char ch;
+		int freq;
+		Node left;
+		Node right;
+	}
+	
+	static int heapSize;
+	
+	
+	public static void main(String args[]) {
+		char[] ch = new char[] {'a','b','c','d','e','f'};
+		int[] freq = new int[] {45,13,12,16,9,5};
+		
+		int len = ch.length;
+		
+		heapSize = len-1;
+		
+		Node[] node = new Node[len];
+		
+		for(int i=0;i<len;i++) {
+			node[i] = new Node();
+			node[i].ch = ch[i];
+			node[i].freq = freq[i];
+		}
+		
+		minHeapify(node);
+		
+		
+		
+		for(int i=0;i<len-1;i++) {
+			
+			/*for(int i1=0;i1<=heapSize;i1++) {
+				System.out.println(node[i1].ch+"  "+node[i1].freq);
+			}
+			System.out.println("_______________");*/
+			
+			Node a = extractMin(node);
+			Node b = extractMin(node);
+			
+			Node x = new Node();
+			x.ch = ' ';
+			x.freq = a.freq + b.freq;
+			x.left = a;
+			x.right = b;
+			
+			insert(node,x);
+		}
+		
+		printCode('a',node[0],node,"");
+		
+	}
+	
+	public static void printCode(char ch, Node x, Node[] node,String s) {
+		if(x.ch == ch) {
+			System.out.println("codeword is : "+ s);
+		}else if(x.left==null && x.right==null){
+			
+		}else {
+			printCode(ch,x.left,node,s+" 0");
+			printCode(ch,x.right,node,s+" 1");
+		}
+	}
+	
+	public static void insert(Node[] node, 	Node x) {
+		heapSize++;
+		node[heapSize] = x;
+		
+		int parent = heapSize/2;
+		int k = heapSize;
+		
+		while(node[parent].freq>node[k].freq) {
+			Node temp = node[parent];
+			node[parent] = node[k];
+			node[k] = temp;
+			k = parent;
+			parent = k/2;
+		}
+	}
+	
+	public static Node extractMin(Node[] node) {
+		Node temp = node[0];
+		node[0] = node[heapSize];
+		heapSize--;
+		heapSort(node,0,heapSize);
+		return temp;
+	}
+	
+	public static void minHeapify(Node[] node) {
+		int len = node.length;
+		
+		for(int i=len/2;i>=0;i--) {
+			heapSort(node,i,heapSize);
+		}
+	}
+	
+	public static void heapSort(Node[] node, int root, int heapSize) {
+		int left = 2*root+1;
+		int right = 2*root+2;
+		
+		int smallest = root;
+		
+		if(left<=heapSize && node[left].freq<node[smallest].freq) {
+			smallest = left;
+		}
+		
+		if(right<=heapSize && node[right].freq<node[smallest].freq) {
+			smallest = right;
+		}
+		
+		if(smallest != root) {
+			Node temp = node[root];
+			node[root] = node[smallest];
+			node[smallest] = temp;
+			heapSort(node,smallest,heapSize);
+		}
+	}
+}
